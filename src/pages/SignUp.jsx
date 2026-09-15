@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { supabase } from "../lib/supabase"
+import Spinner from "../components/Spinner";
 
 function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function handleSignUp(event) {
     event.preventDefault();
@@ -17,6 +19,8 @@ function SignUp() {
       setErrorMessage("Preencha o email e password");
       return;
     }
+
+    setLoading(true)
 
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -32,7 +36,11 @@ function SignUp() {
     }
 
     setMessage("Conta criada! Verifica o seu ")
+
+    setLoading(false)
   }
+
+  
 
 
   return (
@@ -64,7 +72,7 @@ function SignUp() {
             placeholder="voce@exemplo.com"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white placeholder-slate-500 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+            className="w-full rounded-lg bg-slate-800 border border-[#3498db] text-white placeholder-slate-500 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
           />
         </div>
 
@@ -104,9 +112,19 @@ function SignUp() {
 
         <button
           type="submit"
-          className="w-full rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold text-sm py-2.5 transition-colors"
+          disabled={loading}
+          className="w-full rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold text-sm py-2.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
-          Criar conta
+          {
+            loading ? (
+              <>
+                <Spinner />
+                Criando conta...
+              </>
+            ) : (
+              "Criar Conta"
+            )
+          } 
         </button>
       </form>
     </div>
